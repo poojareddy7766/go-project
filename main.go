@@ -47,6 +47,20 @@ func main(){
 		return c.Status(201).JSON(todo)
 	})
 
+	////--- All about updating Todo 
+	app.Patch("/api/todos/:id",func(c *fiber.Ctx) error{
+        id :=c.Params("id")
+		
+		for i, todo:=range todos{
+			if fmt.Sprint(todo.ID) == id{
+				todos[i].Completed = true
+				return c.Status(200).JSON(todos[i])
+			}
+		}
+		return c.Status(404).JSON(fiber.Map{"error": "Todo not Found"})
+	})
+
+   
 	log.Fatal(app.Listen(":4000"))
 
 }
