@@ -25,10 +25,14 @@ func main(){
 	app :=fiber.New()
 	//fatal is equivalent to print() followed by an equivalent os.Exit(1)
    	///----- All about get request
-	   app.Get("/",func(c *fiber.Ctx) error{
-		return c.Status(200).JSON(fiber.Map{"msg": "Start Understanding get request"})
-	})
+	//    app.Get("/",func(c *fiber.Ctx) error{
+	// 	return c.Status(200).JSON(fiber.Map{"msg": "Start Understanding get request"})
+	// })
 
+	// get request
+	app.Get("/api/todos",func(c *fiber.Ctx) error{
+		return c.Status(200).JSON(todos)
+	})
 	////--- All about post request - create a todo
     app.Post("/api/todos",func(c *fiber.Ctx) error{
 		todo := &Todo{}
@@ -47,6 +51,31 @@ func main(){
 		return c.Status(201).JSON(todo)
 	})
 
+	////--- All about updating Todo 
+	app.Patch("/api/todos/:id",func(c *fiber.Ctx) error{
+        id :=c.Params("id")
+		
+		for i, todo:=range todos{
+			if fmt.Sprint(todo.ID) == id{
+				todos[i].Completed = true
+				return c.Status(200).JSON(todos[i])
+			}
+		}
+		return c.Status(404).JSON(fiber.Map{"error": "Todo not Found"})
+	})
+	
+	 // -- Delete a Todo 
+	 app.Delete("/api/todos/:id", func(c *fiber.Ctx) error {
+		id := c.Params("id")
+		for i, todo := range todos {
+			if fmt.Sprint(todo.ID) == id {
+				todos = append(todos[:i], todos[i+1:]...) // Fixed closing parenthesis here
+				return c.Status(200).JSON(fiber.Map{"Success": "true"})
+			}
+		}
+		return c.Status(404).JSON(fiber.Map{"error": "Todo not Found"})
+	})
+   
 	log.Fatal(app.Listen(":4000"))
 
 }
