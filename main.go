@@ -26,5 +26,9 @@ func main(){
 
 	log.Fatal(app.Listen(":4000"))
 	//fatal is equivalent to print() followed by an equivalent os.Exit(1)
+   	///----- All about get request
+	   app.Get("/",func(c *fiber.Ctx) error{
+		return c.Status(200).JSON(fiber.Map{"msg": "Start Understanding get request"})
+	})
 
 }
