@@ -25,10 +25,14 @@ func main(){
 	app :=fiber.New()
 	//fatal is equivalent to print() followed by an equivalent os.Exit(1)
    	///----- All about get request
-	   app.Get("/",func(c *fiber.Ctx) error{
-		return c.Status(200).JSON(fiber.Map{"msg": "Start Understanding get request"})
-	})
+	//    app.Get("/",func(c *fiber.Ctx) error{
+	// 	return c.Status(200).JSON(fiber.Map{"msg": "Start Understanding get request"})
+	// })
 
+	// get request
+	app.Get("/api/todos",func(c *fiber.Ctx) error{
+		return c.Status(200).JSON(todos)
+	})
 	////--- All about post request - create a todo
     app.Post("/api/todos",func(c *fiber.Ctx) error{
 		todo := &Todo{}
