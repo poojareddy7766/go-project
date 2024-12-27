@@ -40,6 +40,10 @@ func main(){
 		}
 		todo.ID = len(todos) + 1
 		todos = append(todos, *todo)
+		// var x int=5
+		// var p *int=&X
+		// fmt.println(p)
+		// fmt.println(*p)
 		return c.Status(201).JSON(todo)
 	})
 
