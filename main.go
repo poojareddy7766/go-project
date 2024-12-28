@@ -97,13 +97,16 @@ import
     "fmt"
 	"log"
 	"os"
+	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 //mongoDb stores data in the form of Binary JSON
 type Todo struct {
-	ID        int    `json:"id" bson: "_id"`
+	ID        primitive.ObjectID  `json:"_id,omitempty" bson:"_id,omitempty"`
 	Completed bool   `json:"completed"`
 	Body      string `json:"body"`
 }
@@ -121,20 +124,22 @@ func main(){
 	if err != nil{
 		log.Fatal(err)
 	}
+	defer client.Disconnect(context.Background())
 	err = client.Ping(context.Background(),nil)
 
 	if err != nil{
 		log.Fatal(err)
 	}
+	
 	fmt.Println("CONNECTED TO MONGODB ATLAS")
  
 
-	collection=client.Database("golang_db").collection("todos")
+	collection=client.Database("golang_db").Collection("todos")
 	app :=fiber.New()	
-	app.Get("api/todos",getTodo)
+	app.Get("api/todos",getTodos)
 	app.Post("api/todos",createTodo)
-	app.Patch("api/todos/:i",updateTodo)
-	app.Delete("api/todos/:i",deleteTodo)
+    app.Patch("api/todos/:id",updateTodo)
+	app.Delete("api/todos/:id",deleteTodo)
 	
 	port := os.Getenv("PORT")
     if port == ""{
@@ -143,4 +148,4 @@ func main(){
 
 	log.Fatal(app.Listen("0.0.0.0:"+port))
 }
-
+	
