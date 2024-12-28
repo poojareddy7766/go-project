@@ -167,3 +167,21 @@ func getTodos(c *fiber.Ctx) error{
 	return c.JSON(todos)
 }
 
+// Post Request
+
+func createTodo(c *fiber.Ctx) error{
+	todo := new(Todo)
+	if err := c.BodyParser(todo); err!=nil{
+		return err
+	}
+	if todo.Body==""{
+		return c.Status(400).JSON(fiber.Map{"error": "Todo body cannot be empty"})
+	}
+	insertResult,err := collection.InsertOne(context.Background(), todo)
+	if err != nil {
+		return err
+	}
+	todo.ID=insertResult.InsertedID.(primitive.ObjectID)
+	return c.Status(201).JSON(todo)
+ }
+
