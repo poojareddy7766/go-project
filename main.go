@@ -37,7 +37,7 @@ func main(){
     app.Post("/api/todos",func(c *fiber.Ctx) error{
 		todo := &Todo{}
 		if err := c.BodyParser(todo); err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid request body must not be a string"})
 		}
 		if todo.Body == "" {
 			return c.Status(400).JSON(fiber.Map{"error": "Todo body is required"})
