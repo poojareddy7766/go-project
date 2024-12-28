@@ -148,4 +148,22 @@ func main(){
 
 	log.Fatal(app.Listen("0.0.0.0:"+port))
 }
-	
+
+// Get request
+func getTodos(c *fiber.Ctx) error{
+	var todos []Todo
+	cursor,err := collection.Find(context.Background(),bson.M{})
+	if err != nil{
+		return err
+	}
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()){
+		var todo Todo
+		if err := cursor.Decode(&todo);err!=nil{
+			return err
+		}
+		todos = append(todos,todo)
+	}
+	return c.JSON(todos)
+}
+
