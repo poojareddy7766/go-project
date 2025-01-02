@@ -4,7 +4,7 @@ import { useState } from "react";
 import TodoItem from "./TodoItem";
 
 const TodoList = () => {
-	const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const todos = [
 		{
 			_id: 1,
