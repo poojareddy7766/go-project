@@ -90,63 +90,105 @@
 
 // }
 
+// 
+
+
 package main
-import 
-(
+
+import (
 	"context"
-    "fmt"
+	"fmt"
 	"log"
 	"os"
+
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-//mongoDb stores data in the form of Binary JSON
+
 type Todo struct {
-	ID        primitive.ObjectID  `json:"_id,omitempty" bson:"_id,omitempty"`
-	Completed bool   `json:"completed"`
-	Body      string `json:"body"`
+	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Completed bool               `json:"completed"`
+	Body      string             `json:"body"`
 }
+
+
 var collection *mongo.Collection
-func main(){
-	fmt.Println("Hello World");
+
+func main() {
+	fmt.Println("hello world")
+
+	if os.Getenv("ENV") != "production" {
+		// Load the .env file if not in production
 		err := godotenv.Load(".env")
-	if err != nil{
-		log.Fatal("Error loading .env file")
+		if err != nil {
+			log.Fatal("Error loading .env file:", err)
+		}
 	}
-	//load and take the uri
-	MONGODB_URI :=os.Getenv("MONGODB_URI")
+
+	MONGODB_URI := os.Getenv("MONGODB_URI")
 	clientOptions := options.Client().ApplyURI(MONGODB_URI)
-	client,err := mongo.Connect(context.Background(),clientOptions)
-	if err != nil{
+	client, err := mongo.Connect(context.Background(), clientOptions)
+
+	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer client.Disconnect(context.Background())
-	err = client.Ping(context.Background(),nil)
 
-	if err != nil{
+	err = client.Ping(context.Background(), nil)
+	if err != nil {
 		log.Fatal(err)
 	}
-	
-	fmt.Println("CONNECTED TO MONGODB ATLAS")
- 
 
-	collection=client.Database("golang_db").Collection("todos")
-	app :=fiber.New()	
-	app.Get("api/todos",getTodos)
-	app.Post("api/todos",createTodo)
-    app.Patch("api/todos/:id",updateTodo)
-	app.Delete("api/todos/:id",deleteTodo)
-	
+	fmt.Println("Connected to MONGODB ATLAS")
+
+	collection = client.Database("golang_db").Collection("todos")
+
+	app := fiber.New()
+
+	// app.Use(cors.New(cors.Config{
+	// 	AllowOrigins: "http://localhost:5173",
+	// 	AllowHeaders: "Origin,Content-Type,Accept",
+	// }))
+// 	const cors = require("cors");
+// app.use(cors({ origin: "http://localhost:3000" }));
+// app.Use(cors.New(cors.Config{
+	// 	AllowOrigins: "http://localhost:5173",
+	// 	AllowHeaders: "Origin,Content-Type,Accept",
+	// }))
+// app.Use(cors.New(cors.Config)){
+// 	AllowOrigins: "http://localhost:5173",
+// 	 	AllowHeaders: "Origin,Content-Type,Accept",
+// }
+
+app.Use(cors.New(cors.Config{
+	AllowOrigins: "http://localhost:5173", // Allow your frontend's origin
+	AllowMethods: "GET,POST,PATCH,DELETE", // Allow required methods
+	AllowHeaders: "Origin, Content-Type, Accept", // Allow necessary headers
+}))
+
+
+	app.Get("/api/todos", getTodos)
+	app.Post("/api/todos", createTodo)
+	app.Patch("/api/todos/:id", updateTodo)
+	app.Delete("/api/todos/:id", deleteTodo)
+
 	port := os.Getenv("PORT")
-    if port == ""{
-		port ="5000"
+	if port == "" {
+		port = "5001"
 	}
 
-	log.Fatal(app.Listen("0.0.0.0:"+port))
+	if os.Getenv("ENV") == "production" {
+		app.Static("/", "./client/dist")
+	}
+
+	log.Fatal(app.Listen("0.0.0.0:" + port))
+
 }
 
 // Get request
@@ -162,6 +204,7 @@ func getTodos(c *fiber.Ctx) error{
 		if err := cursor.Decode(&todo);err!=nil{
 			return err
 		}
+		//todo.ID = todo.ID.Hex()
 		todos = append(todos,todo)
 	}
 	return c.JSON(todos)

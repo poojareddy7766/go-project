@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BASE_URL } from "../App";
 
 export type Todo = {
-	_id: string;
+	_id: number;
 	body: string;
 	completed: boolean;
 };
@@ -23,6 +23,7 @@ const TodoList = () => {
             return res.json();
         },
 	});
+	const allCompleted = todos?.every(todo => todo.completed);
 	return (
 		<>
 			<Text fontSize={"4xl"} textTransform={"uppercase"} fontWeight={"bold"} textAlign={"center"} my={2}
@@ -35,12 +36,20 @@ const TodoList = () => {
 					<Spinner size={"xl"} />
 				</Flex>
 			)}
-			{!isLoading && todos?.length === 0 && (
+			{!isLoading &&todos==null&& (
 				<Stack alignItems={"center"} gap='3'>
 					<Text fontSize={"xl"} textAlign={"center"} color={"gray.500"}>
 						All tasks completed! 🤞
 					</Text>
 					<img src='/go.png' alt='Go logo' width={70} height={70} />
+				</Stack>
+			)}
+			{/* Show this message when all tasks are completed */}
+			{!isLoading && todos && todos.length > 0 && allCompleted && (
+				<Stack alignItems={"center"} gap='3'>
+					<Text fontSize={"xl"} textAlign={"center"} color={"gray.500"}>
+						All tasks completed! 🤞
+					</Text>
 				</Stack>
 			)}
 			<Stack gap={3}>
