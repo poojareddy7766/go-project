@@ -29,7 +29,9 @@ const TodoList = () => {
 	];
 	return (
 		<>
-			<Text fontSize={"4xl"} textTransform={"uppercase"} fontWeight={"bold"} textAlign={"center"} my={2}>
+			<Text fontSize={"4xl"} textTransform={"uppercase"} fontWeight={"bold"} textAlign={"center"} my={2}
+            bgGradient='linear(to-l, #7928CA, #FF0080)'
+            bgClip='text'>
 				Today's Tasks
 			</Text>
 			{isLoading && (
