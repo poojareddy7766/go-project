@@ -102,7 +102,6 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -122,6 +121,8 @@ var collection *mongo.Collection
 func main() {
 	fmt.Println("hello world")
 
+
+	// make dashboard fields
 	if os.Getenv("ENV") != "production" {
 		// Load the .env file if not in production
 		err := godotenv.Load(".env")
@@ -166,11 +167,11 @@ func main() {
 // 	 	AllowHeaders: "Origin,Content-Type,Accept",
 // }
 
-app.Use(cors.New(cors.Config{
-	AllowOrigins: "http://localhost:5173", // Allow your frontend's origin
-	AllowMethods: "GET,POST,PATCH,DELETE", // Allow required methods
-	AllowHeaders: "Origin, Content-Type, Accept", // Allow necessary headers
-}))
+// app.Use(cors.New(cors.Config{
+// 	AllowOrigins: "http://localhost:5173", // Allow your frontend's origin
+// 	AllowMethods: "GET,POST,PATCH,DELETE", // Allow required methods
+// 	AllowHeaders: "Origin, Content-Type, Accept", // Allow necessary headers
+// }))
 
 
 	app.Get("/api/todos", getTodos)
