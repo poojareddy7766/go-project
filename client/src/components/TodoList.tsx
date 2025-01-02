@@ -18,7 +18,7 @@ const TodoList = () => {
             const res = await fetch(BASE_URL + "/todos");
             if (!res.ok) {
                 const errorData = await res.json();
-                throw new Error( "Failed to fetch todos"||errorData.error);
+                throw new Error( errorData.error||"Failed to fetch todos");
             }
             return res.json();
         },
