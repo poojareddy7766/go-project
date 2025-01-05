@@ -11,7 +11,6 @@ preview of apis' without external DB: https://www.youtube.com/watch?v=-ZfZUHnVX6
 <img width="1168" alt="Screenshot 2025-01-02 at 2 54 15 PM" src="https://github.com/user-attachments/assets/4b30c1ec-5e4b-42be-a0c4-439de30620e1" />
 
 
-apis without external DB
 
 
 
